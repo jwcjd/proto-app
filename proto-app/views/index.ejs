@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Shopping List</title>
+    <meta name="viewport" content="user-scalable=no, width=device-width, initial-scale=1, maximum-scale=1">
+    <script src="/bundle.js"></script>
+  </head>
+ <body>
+  <div class="container">
+        <ul>
+          <% tracks.forEach(function(tracks) { %>
+            <a onClick = "handler('<%= tracks.artist %>','<%= tracks.title %>','<%= tracks.imgurl %>','<%= tracks.link %>')">
+              <li><%= tracks.artist %> - <%= tracks.title %>
+                <img src ="<%= tracks.imgurl %>"></img>
+              </li>
+          <% }); %>
+        </ul>
+        
+  </div>
+	<script>
+
+  function handler(artist,title,imgurl,link){
+    var subject = title + " - " + artist;
+
+    var messageToShare = {
+      "attachment":{
+         "type":"template",
+         "payload":{
+             "template_type":"generic",
+             "elements": [{
+                 "title": subject,
+                 "image_url": imgurl,
+                 "default_action":{
+                     "type":"web_url",
+                     "url": link
+                 },
+                 "buttons":[{
+                     "type":"web_url",
+                     "url":"https://m.app.melon.com",
+                     "title":"MelOn"
+                 }]
+             }]
+         }
+      }
+    };
+  
+    window.MessengerExtensions.beginShareFlow(
+      function success(response) {
+        if (response.is_sent) {
+          window.MessengerExtensions.requestCloseBrowser(null, null);
+        }
+      }, function error(errorCode, errorMessage) {
+      },
+      messageToShare,
+      "current_thread");  
+      
+  }
+  window.extAsyncInit = function() {
+    };
+  (function(d, s, id){
+        var js, fjs = d.getElementsByTagName(s)[0];
+        if (d.getElementById(id)) {return;}
+        js = d.createElement(s); js.id = id;
+        js.src = "//connect.facebook.com/en_US/messenger.Extensions.js";
+        fjs.parentNode.insertBefore(js, fjs);
+      }(document, 'script', 'Messenger'));
+    </script>
+  </body>
+</html>
+
+
